@@ -48,7 +48,7 @@ type RstBlock struct {
 
 func GetInfo(url string,startBlock,interval,step int64) (number,txnum,timestamp int64){
 	sBlockNum := strconv.FormatInt(startBlock,16)
-	//fmt.Printf("第%d块 ",startBlock)
+	fmt.Printf("第%d块 ",startBlock)
 	str3:= "{\"jsonrpc\":\"2.0\",\"method\":\"eth_getBlockByNumber\",\"params\":[\"0x"
 	str4 := "\",false],\"id\":1}"
 	payload := strings.NewReader(str3+sBlockNum+str4)
@@ -65,20 +65,25 @@ func GetInfo(url string,startBlock,interval,step int64) (number,txnum,timestamp 
 		panic(err)
 	}
 	txnum = int64(len(rstdata.Result.Transactions))
-	//fmt.Printf("交易个数%d ", txnum)
+	fmt.Printf("交易个数%d ", txnum)
 	timestamp,_ = strconv.ParseInt(string(rstdata.Result.Time), 0, 64)
+
+	size ,_:= strconv.ParseInt(string(rstdata.Result.Size), 0, 64)
+	fmt.Printf("区块大小 %d ",size)
 	//fmt.Printf("出块时间 %d\n",timestamp)
 	//fmt.Println(rstdata.Result.Transactions)
+	fmt.Println()
 	return startBlock,txnum,timestamp
 }
 
 func main(){
-	startBlock := int64(7000)
+	startBlock := int64(97388)
+	stopBlock := int64(97409)
 	txCount := int64(0)
 	//for {
 	//	time.Sleep(time.Second)
-	for i:=int64(0);i<100;i++{
-		_,txnum,_ := GetInfo("http://192.168.3.32:22000",startBlock+i,10,10)
+	for i:=startBlock;i<stopBlock+1;i++{
+		_,txnum,_ := GetInfo("http://192.168.3.32:22000",i,10,10)
 		txCount = txCount+txnum
 	}
 	//}
